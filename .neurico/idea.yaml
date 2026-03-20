@@ -1,0 +1,35 @@
+idea:
+  title: Can LLMs zero-shot max entropy questions?
+  domain: nlp
+  hypothesis: 'Large language models can, in a zero-shot setting, generate yes/no
+    questions that split a given set (e.g., a list of fruits) into two groups of equal
+    or nearly equal size; however, there may exist sets for which LLMs find this task
+    difficult.
+
+    '
+  background:
+    description: 'If you give a model a set of things, e.g., fruits:
+
+      Apple
+
+      Mango
+
+      Strawberry
+
+      Pineapple
+
+      Blueberry
+
+      Can it generate a yes/no question that splits the set into half or very close?
+      Are there sets for which LLMs find this difficult?
+
+      '
+  metadata:
+    author: Ari Holtzman
+    source: IdeaHub
+    source_url: https://hypogenic.ai/ideahub/idea/1uWzIml89A8n4n3RNt6Z
+    idea_id: can_llms_zero_shot_max_entropy_20260320_171703_146b858b
+    created_at: '2026-03-20T17:17:03.394120'
+    status: submitted
+    github_repo_name: llm-zero-shot-entropy-claude
+    github_repo_url: https://github.com/Hypogenic-AI/llm-zero-shot-entropy-claude
