@@ -1,0 +1,26 @@
+\section{Introduction}
+\label{sec:intro}
+
+The game of 20 Questions distills a fundamental challenge in information seeking: given a set of possibilities, ask questions that narrow the space as efficiently as possible.
+The optimal strategy is binary search---each question should split the remaining candidates into two equal halves, maximizing information gain at every step.
+This principle underlies not only parlor games but also medical diagnosis, fault isolation, and interactive AI systems that must identify user intent through clarifying questions.
+
+Given the rapid advances in large language model (LLM) capabilities, a natural question arises: \textbf{can LLMs generate yes/no questions that split a set of items in half?}
+If so, they could serve as efficient question generators in interactive systems without any task-specific training.
+If not, understanding \emph{when} and \emph{why} they fail would inform the design of better prompting strategies and training objectives.
+
+Prior work has evaluated LLMs as players in 20 Questions games, finding that zero-shot models achieve expected information gain (EIG) of only 0.29--0.35 \citep{mazzaccara2024learning}, far from the optimal 1.0 bit.
+However, these studies tested older models (GPT-3.5, LLaMA~2) and embedded question quality within multi-turn game performance, making it difficult to isolate the core capability.
+No prior work has systematically evaluated whether modern LLMs (GPT-4.1, released March 2025) can generate a \emph{single} question that achieves maximum entropy over a given item set, or what properties of the set make this task difficult.
+
+We address this gap with the first systematic evaluation of single-question split quality across modern LLMs, multiple prompt strategies, and diverse set compositions.
+Our key findings include:
+
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item We show that the capability for optimal splitting \emph{exists} but is not default behavior: \gptfull with chain-of-thought prompting achieves binary entropy of 1.000 on structured sets, compared to 0.027 with basic prompting on homogeneous sets---a gap of 0.973.
+    \item We identify set composition as the primary difficulty factor, establishing a clear difficulty ranking from mixed-category sets (100\% perfect splits) to homogeneous sets (65\% perfect splits).
+    \item We demonstrate that \gptmini produces more naturally discriminative questions than \gptfull under basic prompting, revealing that stronger models do not automatically ask better questions.
+    \item We evaluate three prompt strategies across 8 datasets and 1,049 trials, finding that chain-of-thought prompting is the most reliable approach for eliciting optimal splits.
+\end{itemize}
+
+The rest of the paper is organized as follows. \Secref{sec:related} reviews related work on LLM question generation and information-theoretic evaluation. \Secref{sec:method} describes our methodology, datasets, and metrics. \Secref{sec:results} presents experimental results and analysis. \Secref{sec:discussion} discusses implications and limitations, and \secref{sec:conclusion} concludes.

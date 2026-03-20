@@ -1,0 +1,25 @@
+{
+  "seed": 42,
+  "prompt_strategies": [
+    "basic",
+    "explicit_split",
+    "chain_of_thought"
+  ],
+  "gen_models": [
+    "gpt-4.1",
+    "gpt-4o-mini"
+  ],
+  "judge_model": "gpt-4.1",
+  "dataset_limits": {
+    "fruits_8": null,
+    "animals_8": null,
+    "mixed_categories_8": null,
+    "mcrae_8": 30,
+    "things_8": 30,
+    "mcrae_16": 20,
+    "gpt_8": 20,
+    "bigbench": 15
+  },
+  "timestamp": "2026-03-20T17:54:14.033216",
+  "total_trials": 1050
+}

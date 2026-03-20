@@ -1,0 +1,788 @@
+You are an academic paper writer. Generate a complete NEURIPS style paper
+based on the experiment results provided.
+
+════════════════════════════════════════════════════════════════════════════════
+                         IMPORTANT: BEFORE YOU START
+════════════════════════════════════════════════════════════════════════════════
+
+Before writing any content, you MUST complete these steps:
+
+1. READ THE SKILL: Review the paper-writer skill at .claude/skills/paper-writer/SKILL.md
+2. READ THE STYLE GUIDE: Study templates/paper_writing/lab_style_guide.md carefully
+3. REVIEW EXAMPLES: Browse paper_examples/ for formatting and language patterns:
+   - Look at sections/1.introduction.tex for language style
+   - Look at tables/*.tex for table formatting
+   - Look at commands/*.tex for macro usage
+4. VERIFY COMMAND TEMPLATES: Command templates (math.tex, general.tex, macros.tex) are pre-copied to paper_draft/commands/
+
+CRITICAL: Reference example papers for FORMATTING and LANGUAGE STYLE only.
+Do NOT copy content, phrasing, or narrative structure from the example papers.
+The examples are in a different research domain - focus only on presentation style.
+
+════════════════════════════════════════════════════════════════════════════════
+                            EXPERIMENT REPORT
+════════════════════════════════════════════════════════════════════════════════
+
+# Can LLMs Zero-Shot Generate Max-Entropy Questions?
+
+## 1. Executive Summary
+
+We tested whether modern LLMs can generate yes/no questions that split a set of items into two equal halves — the optimal strategy for information gain (binary search). We evaluated GPT-4.1 and GPT-4o-mini across 8 datasets (1,049 trials total) with 3 prompt strategies. **Key finding**: LLMs *can* achieve near-perfect splits, but performance is highly dependent on (a) prompt strategy and (b) set composition. With chain-of-thought prompting, GPT-4.1 achieves 100% perfect splits on structured category sets (mcrae_8, mixed_categories) and 65% on homogeneous sets (all-fruits). Without explicit guidance, GPT-4.1 performs *worse* than GPT-4o-mini, generating questions with near-zero information gain on homogeneous sets (binary entropy = 0.027 on fruits). This reveals that the core *capability* exists but is not the default behavior — LLMs need to be told to optimize for balanced splits.
+
+## 2. Goal
+
+**Hypothesis**: Large language models can, in a zero-shot setting, generate yes/no questions that split a given set into two equal halves, but certain set types are harder than others.
+
+**Why this matters**: Efficient information-seeking (20 Questions, diagnosis, troubleshooting) requires questions that maximize information gain — ideally splitting the possibility space in half at each step. If LLMs can do this zero-shot, they can serve as question generators in interactive AI systems without task-specific training.
+
+**Gap filled**: Prior work (Mazzaccara et al. 2024) found zero-shot EIG ~0.3 for LLaMA 2, but tested older models in multi-turn games. We provide the first single-question evaluation of modern LLMs (GPT-4.1, March 2025) with systematic difficulty analysis.
+
+## 3. Data Construction
+
+### Dataset Description
+
+We used 8 datasets totaling 395 item sets, drawn from established benchmarks and custom sets:
+
+| Dataset | Sets Used | Items/Set | Source | Difficulty |
+|---------|-----------|-----------|--------|------------|
+| mixed_categories_8 | 20 | 8 | Custom (animals+vehicles, etc.) | Easy |
+| mcrae_8 | 30 | 8 | Bertolazzi 2023 (McRae norms) | Easy-Medium |
+| gpt_8 | 20 | 8 | Bertolazzi 2023 (GPT norms) | Easy-Medium |
+| mcrae_16 | 20 | 16 | Bertolazzi 2023 | Medium |
+| things_8 | 30 | 8 | Zhang 2024 (Things dataset) | Medium-Hard |
+| animals_8 | 20 | 8 | Custom (all animals) | Hard |
+| fruits_8 | 20 | 8 | Custom (all fruits) | Hard |
+| bigbench | 15 | 29 | Srivastava 2023 | Variable |
+
+### Example Samples
+
+**Mixed categories (easy)**: `[elephant, snake, cat, dolphin, car, boat, airplane, helicopter]`
+- Obvious split: animals vs. vehicles → 4:4
+
+**Fruits (hard)**: `[grape, apple, strawberry, kiwi, coconut, blueberry, cherry, banana]`
+- No obvious binary category; must find subtle properties (e.g., &#34;has more than 6 letters&#34;)
+
+**BigBench (large, mixed)**: `[apple, television, dinosaur, ..., representative democracy]` (29 items)
+- Mix of concrete objects, emotions, abstract concepts
+
+### Preprocessing
+Items were used as-is from the datasets. No deduplication or filtering was applied.
+
+## 4. Experiment Description
+
+### Methodology
+
+#### High-Level Approach
+For each item set, we:
+1. **Generate**: Prompt the LLM to produce a yes/no question
+2. **Annotate**: Use GPT-4.1 as oracle to label each item &#34;yes&#34; or &#34;no&#34;
+3. **Measure**: Compute binary entropy of the resulting split (1.0 = perfect half)
+
+#### Why This Method?
+Using the same judge model (GPT-4.1) across all conditions ensures consistent annotation. Binary entropy directly measures split quality on a 0-1 scale where 1.0 = optimal.
+
+### Three Prompt Strategies
+
+1. **Basic**: &#34;Generate a single yes/no question about these items.&#34; (No mention of splitting)
+2. **Explicit split**: &#34;Generate a yes/no question such that exactly N/2 would be &#39;yes&#39; and N/2 &#39;no&#39;.&#34;
+3. **Chain-of-thought**: Step-by-step reasoning — identify properties, find one shared by exactly half, formulate question.
+
+### Implementation Details
+
+| Parameter | Value |
+|-----------|-------|
+| Generator models | GPT-4.1, GPT-4o-mini |
+| Judge model | GPT-4.1 (temperature=0) |
+| Generation temperature | 0.3 |
+| Batch size | 10 concurrent API calls |
+| Random seed | 42 |
+| Total trials | 1,049 |
+
+### Evaluation Metrics
+
+1. **Binary entropy**: H(p) = -p·log₂(p) - (1-p)·log₂(1-p), where p = yes_count/total. Perfect split = 1.0, all-yes or all-no = 0.0.
+2. **Perfect split rate**: % of trials achieving exact N/2:N/2 split.
+3. **Mean deviation from half**: |yes_count - N/2|, measuring how far from balanced.
+
+## 5. Raw Results
+
+### Main Results Table (Binary Entropy, mean ± std)
+
+#### GPT-4.1
+
+| Dataset | Basic | Explicit Split | Chain-of-Thought |
+|---------|-------|---------------|-----------------|
+| mixed_categories_8 | 0.841 ± 0.365 | **1.000 ± 0.000** | **1.000 ± 0.000** |
+| mcrae_8 | 0.206 ± 0.367 | 0.997 ± 0.012 | **1.000 ± 0.000** |
+| gpt_8 | 0.177 ± 0.375 | **0.998 ± 0.010** | 0.998 ± 0.010 |
+| mcrae_16 | 0.484 ± 0.475 | 0.995 ± 0.014 | **1.000 ± 0.000** |
+| bigbench | 0.992 ± 0.000 | **0.998 ± 0.002** | 0.942 ± 0.107 |
+| things_8 | 0.410 ± 0.394 | 0.932 ± 0.093 | **0.947 ± 0.099** |
+| animals_8 | 0.387 ± 0.414 | 0.936 ± 0.100 | **0.944 ± 0.116** |
+| fruits_8 | 0.027 ± 0.122 | 0.768 ± 0.396 | **0.977 ± 0.044** |
+
+#### GPT-4o-mini
+
+| Dataset | Basic | Explicit Split | Chain-of-Thought |
+|---------|-------|---------------|-----------------|
+| mixed_categories_8 | 0.950 ± 0.224 | 0.998 ± 0.010 | **1.000 ± 0.000** |
+| mcrae_8 | 0.600 ± 0.457 | 0.975 ± 0.058 | **0.995 ± 0.014** |
+| gpt_8 | 0.729 ± 0.408 | 0.986 ± 0.043 | **1.000 ± 0.000** |
+| mcrae_16 | 0.619 ± 0.462 | 0.937 ± 0.110 | **0.984 ± 0.068** |
+| bigbench | 0.781 ± 0.230 | 0.722 ± 0.115 | **0.960 ± 0.091** |
+| things_8 | 0.872 ± 0.206 | 0.876 ± 0.255 | **0.963 ± 0.093** |
+| animals_8 | 0.826 ± 0.246 | 0.855 ± 0.169 | **0.956 ± 0.066** |
+| fruits_8 | 0.381 ± 0.481 | **0.918 ± 0.074** | 0.869 ± 0.235 |
+
+### Perfect Split Rate (%)
+
+#### GPT-4.1
+
+| Dataset | Basic | Explicit Split | Chain-of-Thought |
+|---------|-------|---------------|-----------------|
+| mixed_categories_8 | 80.0 | **100.0** | **100.0** |
+| mcrae_8 | 13.3 | 93.3 | **100.0** |
+| gpt_8 | 15.0 | **95.0** | 94.7 |
+| mcrae_16 | 30.0 | 85.0 | **100.0** |
+| bigbench | 0.0 | **86.7** | 13.3 |
+| things_8 | 3.3 | 23.3 | **56.7** |
+| animals_8 | 0.0 | 20.0 | **70.0** |
+| fruits_8 | 0.0 | 25.0 | **65.0** |
+
+### Statistical Tests
+
+**Strategy comparison (GPT-4.1)**:
+- Basic vs. Chain-of-thought: t = -16.27, p &lt; 0.0001, Cohen&#39;s d = -1.76 (very large effect)
+- Basic vs. Explicit split: t = -15.01, p &lt; 0.0001, Cohen&#39;s d = -1.61 (very large effect)
+- Chain-of-thought vs. Explicit split: t = 1.80, p = 0.073, Cohen&#39;s d = 0.19 (not significant)
+
+**Model comparison (explicit_split strategy)**:
+- GPT-4.1 vs. GPT-4o-mini: t = 2.24, p = 0.026, Cohen&#39;s d = 0.24 (small effect, GPT-4.1 slightly better)
+
+**ANOVA across datasets (explicit_split, GPT-4.1)**:
+- F = 6.35, p &lt; 0.000001 (significant differences between datasets)
+
+## 5. Result Analysis
+
+### Key Finding 1: The Capability Exists But Is Not Default Behavior
+
+GPT-4.1 with the **basic** prompt (just &#34;generate a yes/no question&#34;) produces near-zero entropy on homogeneous sets (fruits: 0.027, gpt_8: 0.177, mcrae_8: 0.206). The model generates overly broad questions like &#34;Is this a fruit?&#34; (answer: yes for all) or &#34;Is this a mammal?&#34; instead of trying to split evenly.
+
+With **chain-of-thought** prompting, the same model jumps to 0.977 on fruits and 1.000 on mcrae_8. The reasoning step forces the model to enumerate items, identify properties, and verify the split count before answering.
+
+### Key Finding 2: GPT-4o-mini Has Better Default Question-Asking Behavior
+
+Surprisingly, GPT-4o-mini with the basic prompt (0.381-0.950 across datasets) consistently outperforms GPT-4.1 with basic prompts (0.027-0.841). This suggests GPT-4o-mini&#39;s default interpretation of &#34;generate a yes/no question&#34; is more naturally discriminative, while GPT-4.1 defaults to generating confirmation-style questions.
+
+However, with explicit instructions (CoT or explicit_split), GPT-4.1 catches up and slightly surpasses GPT-4o-mini.
+
+### Key Finding 3: Set Composition Determines Difficulty
+
+Clear difficulty ranking (from easiest to hardest, based on CoT perfect split rate):
+
+1. **Mixed categories** (100%): Two distinct categories with obvious boundary → trivial
+2. **McRae 8-item** (95-100%): Two taxonomic categories (birds+mammals) → easy with any structured prompt
+3. **GPT 8-item** (95-100%): Similar to McRae but GPT-generated categories
+4. **McRae 16-item** (85-100%): Larger sets but still structured → still manageable
+5. **BigBench** (13-87%): Large (29 items), mixed concrete+abstract → variable difficulty
+6. **Things 8-item** (23-57%): Diverse random items without clear binary structure → hard
+7. **Animals 8-item** (20-70%): All same category, must find sub-properties → hard
+8. **Fruits 8-item** (25-65%): All same category, limited discriminative features → hardest
+
+**What makes a set hard?**
+- **Homogeneity**: When all items share a category (all fruits, all animals), there&#39;s no obvious binary split. The model must find subtle properties (color, size, letter count, habitat).
+- **Lack of clear binary features**: Fruits don&#39;t have obvious binary properties that split evenly. The model resorts to creative but unreliable features (e.g., &#34;name has more than 6 letters&#34;).
+- **Abstract items**: Items like &#34;anger&#34;, &#34;representative democracy&#34;, &#34;beauty&#34; are hard to classify on physical properties.
+
+### Key Finding 4: Chain-of-Thought &gt; Explicit Split (Mostly)
+
+CoT prompting outperforms explicit split instruction on 6 of 8 datasets for GPT-4.1. The reasoning process helps the model:
+- Enumerate candidate properties
+- Count how many items match each property
+- Verify the split before committing
+
+The exception is BigBench, where explicit_split (86.7% perfect) beats CoT (13.3%). With 29 items, the CoT reasoning becomes unreliable — the model loses count over long lists.
+
+### Example Questions: Best and Worst
+
+**Best — perfect split on fruits** (CoT, GPT-4.1):
+- Items: grape, apple, strawberry, kiwi, coconut, blueberry, cherry, banana
+- Q: &#34;Is the fruit&#39;s name composed of more than six letters?&#34;
+- Yes: strawberry (10), coconut (7), blueberry (9), banana (6) → **wait, banana has 6 letters**
+- This reveals a subtle issue: the judge (GPT-4.1) may interpret &#34;more than six&#34; as ≥6 or &gt;6 inconsistently, but the split happened to be 4:4.
+
+**Worst — complete failure on fruits** (basic, GPT-4.1):
+- Items: cherry, pear, mango, apple, watermelon, banana, grape, pineapple
+- Q: &#34;Is the fruit&#39;s name made up of more than one word?&#34;
+- Result: 0:8 (no fruit has a multi-word name) → entropy = 0.0
+
+**Best — trivial split on mixed categories** (all strategies):
+- Items: elephant, snake, cat, dolphin, car, boat, airplane, helicopter
+- Q: &#34;Is it a type of vehicle?&#34; → 4:4 perfect split
+
+### Surprises
+
+1. **GPT-4.1 basic prompt is worse than GPT-4o-mini**: The stronger model generates less informative questions when not specifically asked to split evenly. It defaults to &#34;interesting&#34; questions rather than discriminative ones.
+
+2. **BigBench is anomalous**: GPT-4.1 basic prompt gives 0.992 entropy (near-perfect!) because with 29 diverse items, even a generic question like &#34;Is it a physical object?&#34; splits roughly 50/50 by chance. But the CoT strategy performs *worse* because reasoning over 29 items leads to counting errors.
+
+3. **Near-zero variance on perfect sets**: When CoT works, it works consistently — std = 0.000 on mcrae_8 and mixed_categories_8 for GPT-4.1, meaning 100% of trials achieved perfect splits.
+
+### Limitations
+
+1. **Judge model bias**: Using GPT-4.1 as both generator and judge creates potential consistency bias. A different judge might produce different split counts.
+2. **Single run**: Each trial was run once (temperature=0.3 for generation, 0.0 for judging). Multiple runs would reveal variance.
+3. **Limited models tested**: Only OpenAI models tested due to API availability. Claude, Gemini would provide broader picture.
+4. **Annotation ambiguity**: Some questions have genuinely ambiguous answers (e.g., &#34;Is a tomato a fruit?&#34; — botanically yes, culinarily no).
+5. **Temperature sensitivity**: We used temperature=0.3; higher temperatures might produce more diverse (and possibly better) questions.
+
+## 6. Conclusions
+
+### Summary
+
+Modern LLMs **can** zero-shot generate maximum-entropy yes/no questions, but only when explicitly instructed to do so. Chain-of-thought prompting is the most reliable strategy, achieving near-perfect splits on structured sets (100% on mcrae_8) and strong performance even on homogeneous sets (65-70% perfect on fruits/animals). Without explicit guidance, LLMs default to generating interesting but non-discriminative questions.
+
+### Answer to the Research Question
+
+**Can LLMs split a set in half with a yes/no question?** Yes, with the right prompt — chain-of-thought achieves binary entropy &gt; 0.94 across all 8-item datasets.
+
+**Are there sets where this is difficult?** Yes:
+- **Homogeneous sets** (all fruits, all animals): 65-70% perfect split rate even with best prompting
+- **Large sets** (29 items): CoT reasoning breaks down; explicit instruction works better
+- **Diverse random items** (Things dataset): 57% perfect split rate
+
+### Implications
+
+1. **For AI systems**: LLMs can serve as effective question generators for 20Q-style games and diagnostic systems, but must be prompted with explicit split objectives.
+2. **For prompt engineering**: The massive gap between basic (0.027) and CoT (0.977) prompting on the same task demonstrates that capability ≠ default behavior.
+3. **For information theory**: Modern LLMs have strong implicit knowledge of item properties and can reason about set partitions, but this reasoning must be elicited.
+
+## 7. Next Steps
+
+### Immediate Follow-ups
+1. **Multi-turn evaluation**: Test if LLMs can maintain optimal splitting across multiple rounds (full 20Q game)
+2. **More models**: Test Claude 4.5 Sonnet, Gemini 2.5 Pro for broader comparison
+3. **Self-consistency**: Generate multiple questions and pick the best (majority vote on split quality)
+
+### Alternative Approaches
+1. **Self-verification**: Have the model generate a question, then check its own split, and regenerate if unbalanced
+2. **Few-shot examples**: Provide examples of good splits before asking
+3. **Constrained generation**: Use structured output to force the model to output both the question and the predicted split
+
+### Open Questions
+1. Why does GPT-4.1 default to non-discriminative questions while GPT-4o-mini is more naturally balanced?
+2. Can training (DPO/RLHF) on split quality produce models that are naturally good at this without CoT?
+3. What is the theoretical limit of split quality for truly homogeneous sets where no clean binary property exists?
+
+## References
+
+1. Mazzaccara, D., Testoni, A., &amp; Bernardi, R. (2024). Learning to Ask Informative Questions. arXiv:2406.17453.
+2. Bertolazzi, L., Mazzaccara, D., Merlo, F., &amp; Bernardi, R. (2023). ChatGPT&#39;s Information Seeking Strategy. INLG 2023.
+3. Zhang, Y., Lu, J., &amp; Jaitly, N. (2024). Probing Multi-turn Planning via 20Q. ACL 2024.
+4. Hu, Z. et al. (2024). Uncertainty of Thoughts. NeurIPS 2024.
+5. Li, B.Z., Kim, B., &amp; Wang, Z. (2025). QuestBench. arXiv:2503.22674.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                            RESEARCH PLAN
+════════════════════════════════════════════════════════════════════════════════
+
+# Research Plan: Can LLMs Zero-Shot Max Entropy Questions?
+
+## Motivation &amp; Novelty Assessment
+
+### Why This Research Matters
+Binary search is the optimal strategy for narrowing down possibilities — asking a yes/no question that splits a set exactly in half eliminates the maximum information per question. This is fundamental to efficient information seeking. If LLMs can do this zero-shot, they can serve as efficient question generators in interactive systems (diagnosis, 20 Questions, troubleshooting). If they can&#39;t, we need to understand why and when they fail.
+
+### Gap in Existing Work
+Prior work (Mazzaccara et al. 2024, Bertolazzi et al. 2023) evaluates LLMs in multi-turn 20Q games, finding zero-shot EIG ~0.3 (far from optimal 1.0). However:
+1. **No single-question focus**: Prior work embeds question quality in game performance. We isolate the core capability: can a model generate ONE question that splits a set in half?
+2. **No modern model evaluation**: Prior work tests GPT-3.5 and LLaMA 2. GPT-4.1 and other 2025 models are untested.
+3. **No systematic difficulty analysis**: What properties of a set make splitting hard? Prior work notes abstract &gt; concrete difficulty but doesn&#39;t categorize systematically.
+4. **No prompt strategy comparison**: How much does prompt design matter for this task?
+
+### Our Novel Contribution
+We provide the first systematic evaluation of modern LLMs&#39; ability to generate single yes/no questions that achieve maximum entropy (equal split) over item sets, with:
+- Multiple models (GPT-4.1, GPT-4o-mini)
+- Multiple prompt strategies (basic, explicit split instruction, chain-of-thought)
+- Multiple set types varying in difficulty (homogeneous categories, mixed categories, abstract items)
+- Quantitative difficulty analysis identifying what makes sets hard to split
+
+### Experiment Justification
+- **Exp 1 (Prompt strategies)**: Tests whether explicit instruction to &#34;split in half&#34; helps vs. generic &#34;ask a yes/no question.&#34; Establishes best prompt approach.
+- **Exp 2 (Across datasets)**: Tests the core hypothesis across set types of varying difficulty. Identifies when LLMs succeed and fail.
+- **Exp 3 (Set difficulty analysis)**: Systematically categorizes what properties make sets hard to split (homogeneity, abstractness, size).
+
+## Research Question
+Can modern LLMs, given a set of N items, generate a single yes/no question that splits the set into two groups of equal or near-equal size (maximizing information entropy)? What set properties make this task difficult?
+
+## Hypothesis Decomposition
+1. **H1**: LLMs can generate questions that split mixed-category sets (e.g., animals + vehicles) near-perfectly, since category membership is an obvious binary feature.
+2. **H2**: LLMs struggle with homogeneous sets (e.g., all fruits), where no single obvious categorical split exists.
+3. **H3**: Explicit prompting (&#34;split into exactly half&#34;) improves split quality over naive prompting.
+4. **H4**: Chain-of-thought prompting further improves performance by encouraging the model to reason about item properties.
+5. **H5**: Larger sets (16 items) are harder to split evenly than smaller sets (8 items).
+
+## Proposed Methodology
+
+### Approach
+For each item set, prompt an LLM to generate a yes/no question. Then use a judge model (GPT-4.1) to annotate each item as &#34;yes&#34; or &#34;no&#34; for that question. Compute EIG from the resulting split.
+
+### Experimental Steps
+1. **Prompt design**: Create 3 prompt strategies (basic, explicit-split, chain-of-thought)
+2. **Question generation**: For each (dataset, prompt strategy, model) combination, generate questions
+3. **Answer annotation**: Use GPT-4.1 as oracle to label each item yes/no for the generated question
+4. **EIG computation**: Calculate information gain from the split
+5. **Analysis**: Compare across conditions, identify difficulty factors
+
+### Datasets (pre-downloaded)
+| Dataset | Sets | Items/set | Expected difficulty |
+|---------|------|-----------|-------------------|
+| mixed_categories_8 | 20 | 8 | Easy (cross-category) |
+| fruits_8 | 20 | 8 | Hard (homogeneous) |
+| animals_8 | 20 | 8 | Hard (homogeneous) |
+| mcrae_8 | 90 | 8 | Medium (2 categories) |
+| things_8 | 90 | 8 | Medium-Hard (diverse) |
+| mcrae_16 | 90 | 16 | Hard (larger sets) |
+
+### Models
+- **GPT-4.1** (primary): State-of-the-art, via OpenAI API
+- **GPT-4o-mini** (secondary): Smaller/cheaper model for comparison
+
+### Baselines
+- **Optimal**: EIG = 1.0 (perfect 4:4 split for 8 items)
+- **Random**: Expected EIG for random binary assignment ~ 0.81 for 8 items
+
+### Evaluation Metrics
+1. **EIG**: Primary metric. H(prior) - E[H(posterior)]. For 8 items with uniform prior, optimal = 1.0 bit.
+2. **Perfect split rate**: % of questions achieving exact N/2:N/2 split
+3. **Near-perfect rate**: % achieving splits within 1 item of half (e.g., 3:5 or 5:3 for 8 items)
+4. **Mean absolute deviation from half**: |yes_count - N/2|
+
+### Statistical Analysis Plan
+- Compare EIG across prompt strategies using paired t-tests (same sets)
+- Compare across datasets using ANOVA
+- Report 95% confidence intervals
+- Effect sizes (Cohen&#39;s d) for pairwise comparisons
+- Significance level: α = 0.05
+
+## Expected Outcomes
+- Mixed-category sets: EIG &gt; 0.9 (easy to find cross-category question)
+- Homogeneous sets (fruits, animals): EIG 0.5-0.8 (harder, requires finding subtle distinguishing features)
+- Chain-of-thought should improve over basic prompting
+- GPT-4.1 should outperform GPT-4o-mini
+
+## Timeline
+- Planning: 15 min ✓
+- Setup: 10 min
+- Implementation: 45 min
+- Experiments: 60 min
+- Analysis: 30 min
+- Documentation: 20 min
+
+## Potential Challenges
+1. **Annotation ambiguity**: Some items may be ambiguous for a given question. Mitigation: use GPT-4.1 as consistent oracle, force binary yes/no.
+2. **API rate limits**: Many calls needed. Mitigation: batch requests, add retries.
+3. **Question quality**: Model may generate trivial or nonsensical questions. Mitigation: log all questions for manual inspection.
+
+## Success Criteria
+- Complete evaluation across all datasets and prompt strategies
+- Clear evidence for or against the hypothesis
+- Quantitative difficulty ranking of set types
+- Statistical significance of key comparisons
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          LITERATURE REVIEW
+════════════════════════════════════════════════════════════════════════════════
+
+# Literature Review: Can LLMs Zero-Shot Max Entropy Questions?
+
+## Research Area Overview
+
+This research investigates whether large language models can, in a zero-shot setting, generate yes/no questions that split a given set of items into two groups of equal or near-equal size — i.e., questions that maximize information entropy. This connects to the 20 Questions game paradigm from cognitive science, information-theoretic question asking, and LLM reasoning under uncertainty.
+
+The core metric is **Expected Information Gain (EIG)**: for a yes/no question over a set of N items, EIG is maximized when the question splits items into two equal halves (N/2 : N/2), achieving entropy of 1.0 bit. This is equivalent to a single step of binary search.
+
+## Key Papers
+
+### Paper 1: Learning to Ask Informative Questions (Mazzaccara et al., 2024)
+- **Authors**: Davide Mazzaccara, Alberto Testoni, Raffaella Bernardi
+- **Venue**: arXiv:2406.17453 (2024)
+- **Key Contribution**: Uses DPO to train LLMs to ask higher-EIG questions in 20Q games
+- **Methodology**:
+  - Samples multiple questions from LLaMA 2-CHAT 7B for each game
+  - Computes EIG for each question by having the model annotate yes/no for all items
+  - Creates preference pairs: optimal (EIG=1) vs suboptimal (EIG&lt;0.8)
+  - Trains with DPO to prefer high-EIG questions
+- **Datasets**: McRae concepts (66 concepts, 6 categories), 8-item candidate sets from 2 categories of 4 each. Test sets: INLG, Things, Celebrities, INLG-16, BigBench.
+- **Key Results**:
+  - Zero-shot LLaMA 2-CHAT 7B: EIG = 0.29-0.35 across test sets
+  - DPO-trained: EIG = 0.40-0.47 (significant improvement)
+  - DPO improves task success (S@1) by +10-14% and reduces questions needed by 2-3
+  - Abstract concepts much harder than concrete ones (7.7% vs 25.0% zero-shot success)
+  - DPO generalizes across domains but struggles with BigBench (large, diverse sets)
+- **Code**: https://github.com/dmazzaccara/LearningToAsk
+- **Relevance**: **Most directly relevant paper.** Explicitly defines optimal questions as those splitting items into equal halves. Shows zero-shot LLMs have low EIG (~0.3), far from optimal (1.0). Demonstrates that training can improve but not fully solve this.
+
+### Paper 2: ChatGPT&#39;s Information Seeking Strategy (Bertolazzi et al., 2023)
+- **Authors**: Leonardo Bertolazzi, Davide Mazzaccara, Filippo Merlo, Raffaella Bernardi
+- **Venue**: INLG 2023
+- **Key Contribution**: First evaluation of ChatGPT&#39;s information-seeking strategy in 20Q using hierarchical hypothesis spaces
+- **Methodology**:
+  - Builds hierarchical hypothesis spaces using McRae norms and GPT norms
+  - 8-item sets (2-level hierarchy) and 16-item sets (3-level hierarchy)
+  - Tests ChatGPT (gpt-3.5-turbo) as both Questioner and Answerer
+  - Measures EIG and compares to optimal half-split agent
+- **Key Results**:
+  - ChatGPT far from optimal when updating space internally
+  - Performance improves when prompted to explicitly track remaining candidates
+  - Questions categorized as Constraint-Seeking (CS) vs Hypothesis-Scanning (HS)
+- **Code**: https://github.com/leobertolazzi/20q-chatgpt
+- **Relevance**: **Foundational work** for our research. Establishes the experimental paradigm, datasets, and metrics we build on. Shows ChatGPT&#39;s gap from optimal question generation.
+
+### Paper 3: Probing Multi-turn Planning via 20 Questions (Zhang et al., 2024)
+- **Authors**: Yizhe Zhang, Jiarui Lu, Navdeep Jaitly (Apple)
+- **Venue**: ACL 2024 (arXiv:2310.01468)
+- **Key Contribution**: Systematic evaluation of multiple LLMs as guessers in 20Q, plus RL/BC training approaches
+- **Methodology**:
+  - Entity-Deduction Arena (EDA) with Things (500 entities) and Celebrities (500) datasets
+  - GPT-3.5-turbo as judge, various LLMs as guessers
+  - Evaluates: GPT-4, GPT-3.5, Claude-1/2, Vicuna 7B/13B, Mistral 7B
+  - Uses Behavior Cloning and PPO to improve Vicuna models
+- **Key Results**:
+  - GPT-4 best performer (~31% success on Things, ~50% on Celebrities)
+  - Effective strategy: binary-tree-like narrowing, then enumeration
+  - Failure modes: early enumeration, redundancy, inconsistency
+  - Weaker models fall into repetitive patterns
+- **Code**: https://github.com/apple/ml-entity-deduction-arena
+- **Relevance**: Confirms that strong LLMs use binary-partitioning strategies intuitively. Provides datasets and evaluation framework. Shows significant performance gaps between models.
+
+### Paper 4: Uncertainty of Thoughts (Hu et al., 2024)
+- **Authors**: Zhiyuan Hu et al.
+- **Venue**: NeurIPS 2024 (arXiv:2402.03271)
+- **Key Contribution**: Uncertainty-aware planning for LLM information seeking using EIG-based rewards
+- **Relevance**: Proposes algorithmic approach (simulation + reward propagation) to select optimal questions. Improves LLM success rate by 38.1%. Shows that explicit uncertainty tracking helps.
+
+### Paper 5: QuestBench (Li et al., 2025)
+- **Authors**: Belinda Z. Li, Been Kim, Zi Wang (Google DeepMind)
+- **Venue**: arXiv:2503.22674
+- **Key Contribution**: Benchmark for evaluating if LLMs can ask the right question to acquire missing information
+- **Relevance**: Shows models struggle to identify the right question even when they can solve the fully-specified version. Relevant to understanding zero-shot question generation limitations.
+
+### Paper 6: GuessingGame (2025)
+- **Venue**: EMNLP 2025 (arXiv:2509.19593)
+- **Key Contribution**: Directly measures information gain of LLM questions using Bayesian and entropy-based metrics
+- **Relevance**: Finds higher IG reduces expected game length by 43%. Provides IG measurement methodology.
+
+### Paper 7: BED-LLM (2025)
+- **Venue**: arXiv:2508.21184
+- **Key Contribution**: Sequential Bayesian experimental design with EIG for optimal question selection
+- **Relevance**: Shows principled EIG estimation doubles success rate vs. naive QA. Demonstrates that marginal entropy alone is insufficient.
+
+### Paper 8: From Passive to Active Reasoning (Zhou et al., 2025)
+- **Venue**: ICML 2025 (arXiv:2506.08295)
+- **Key Contribution**: AR-Bench evaluating active reasoning including &#34;guessing numbers&#34; tasks
+- **Relevance**: Shows LLMs struggle at active reasoning — frequently fail to maximize expected information gain.
+
+## Common Methodologies
+
+1. **20 Questions Game paradigm**: Player asks yes/no questions to identify target from candidate set. Used in Papers 1-3. Provides controlled evaluation of question informativeness.
+2. **Expected Information Gain (EIG)**: `EIG(Q) = H(prior) - E[H(posterior|answer)]`. For uniform prior over N items, optimal question achieves EIG = 1.0 bit. Used in Papers 1, 2, 4, 6, 7.
+3. **Feature norms**: McRae norms (human-annotated) and GPT norms (LLM-generated) used to build structured hypothesis spaces. Used in Papers 1, 2.
+4. **DPO / RL training**: Preference optimization using EIG-ranked question pairs. Used in Papers 1, 3.
+
+## Standard Baselines
+
+1. **Optimal agent**: Always asks the half-split question (EIG = 1.0). Needs log2(N) questions for N items.
+2. **Random question**: Expected EIG depends on question distribution, typically much lower than optimal.
+3. **Zero-shot LLM**: LLM generates questions without training on EIG signal. Typical EIG: 0.29-0.35 (Paper 1).
+
+## Evaluation Metrics
+
+1. **Expected Information Gain (EIG)**: Primary metric. Measures how well a question splits the item space. Range [0, 1] for binary questions.
+2. **Task success (S@1)**: Percentage of games where target is identified within one dialogue.
+3. **Average questions (AQ)**: Number of questions needed in successful games.
+4. **Split ratio**: |yes_group|:|no_group| — perfect is N/2:N/2.
+
+## Datasets in the Literature
+
+1. **McRae concept sets** (8 items, 16 items): Used in Papers 1, 2. 6 categories (mammal, bird, clothing, weapon, fruit, vegetable). Well-structured taxonomically.
+2. **Things dataset** (500 common entities): Used in Paper 3. Diverse categories.
+3. **Celebrities dataset** (500 celebrity names): Used in Paper 3. Requires factual knowledge.
+4. **BigBench** (29 items per set): Used in Paper 1. Mix of concrete and abstract concepts — hardest setting.
+
+## Gaps and Opportunities
+
+1. **Zero-shot evaluation across modern models**: Prior work mostly tests older models (GPT-3.5, LLaMA 2). No systematic zero-shot evaluation of GPT-4o, Claude 3.5/4, Gemini, etc.
+2. **Single-question focus**: Prior work evaluates multi-turn games. Our focus on single-question splitting is simpler and more directly tests the core capability.
+3. **Difficulty analysis**: What makes certain sets harder to split? Prior work notes abstract &gt; concrete difficulty but doesn&#39;t systematically categorize set difficulty.
+4. **Set composition effects**: How does category homogeneity affect splitting ability? No prior work tests this systematically.
+
+## Recommendations for Our Experiment
+
+### Recommended datasets
+1. **McRae 8-item sets** (90 games): Primary benchmark, well-established, clear optimal split exists
+2. **Things 8-item sets** (90 games): Out-of-domain test
+3. **BigBench sets** (29 games): Hard test with abstract concepts
+4. **Custom sets** (fruits, animals, mixed): Test specific hypotheses about difficulty
+
+### Recommended baselines
+1. **Optimal agent**: Always achieves EIG = 1.0 (4:4 split for 8 items)
+2. **Random split**: Expected EIG for random binary assignment
+3. **Zero-shot LLM (no context)**: Just ask &#34;generate a yes/no question that splits these items in half&#34;
+4. **Zero-shot LLM (with reasoning)**: Chain-of-thought prompting
+
+### Recommended metrics
+1. **EIG** of the generated question (primary)
+2. **Split ratio** (|yes|:|no|)
+3. **Perfect split rate**: % of questions achieving exact half split
+4. **Category alignment**: For structured sets, does the question align with the underlying category boundary?
+
+### Methodological considerations
+- Need an oracle/annotator to determine yes/no for each item given a question
+- Can use the same LLM or a separate (stronger) model as annotator
+- Must handle ambiguous questions (some items may be &#34;maybe&#34;)
+- Should test multiple prompt formulations
+- Should vary set size (8, 16, larger) to test scaling
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          PAPER REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+Generate a complete academic paper with the following structure:
+
+1. TITLE
+   - Clear, specific, informative
+   - Should convey main finding or contribution
+
+2. AUTHOR
+   - Use this exact author line in the \author{} block: Ari Holtzman and NeuriCo
+
+3. ABSTRACT (150-250 words)
+   - Problem statement
+   - Approach
+   - Key results
+   - Significance
+
+4. INTRODUCTION
+   - Research problem and motivation
+   - Gap in existing work
+   - Our contribution (be specific)
+   - Paper organization
+
+5. RELATED WORK
+   - Organized by theme/approach
+   - Position our work relative to prior work
+   - Cite papers from literature review
+
+6. METHODOLOGY
+   - Clear description of approach
+   - Experimental setup
+   - Datasets used
+   - Evaluation metrics
+   - Baselines
+
+7. RESULTS
+   - Present results with tables and figures
+   - Statistical analysis
+   - Comparison to baselines
+   - Ablation studies (if applicable)
+
+8. DISCUSSION
+   - Interpretation of results
+   - Limitations
+   - Broader implications
+
+9. CONCLUSION
+   - Summary of contributions
+   - Key findings
+   - Future work
+
+10. REFERENCES
+   - BibTeX format
+   - All cited papers
+
+════════════════════════════════════════════════════════════════════════════════
+                          OUTPUT FORMAT
+════════════════════════════════════════════════════════════════════════════════
+
+Create a MODULAR LaTeX project with the following directory structure:
+
+paper_draft/
+├── main.tex              # Main file that imports all sections
+├── references.bib        # BibTeX references
+├── sections/
+│   ├── abstract.tex      # Abstract content
+│   ├── introduction.tex  # Introduction section
+│   ├── related_work.tex  # Related work section
+│   ├── methodology.tex   # Methodology section
+│   ├── results.tex       # Results section
+│   ├── discussion.tex    # Discussion section
+│   └── conclusion.tex    # Conclusion section
+├── figures/              # Directory for any generated figures
+├── tables/               # Directory for complex standalone tables
+└── appendix/             # Directory for appendix sections (if needed)
+
+INSTRUCTIONS:
+1. First, create the directory structure above (mkdir -p paper_draft/sections paper_draft/figures paper_draft/tables paper_draft/appendix)
+2. Write main.tex using the EXACT preamble for NEURIPS:
+
+   \documentclass{article}
+   \usepackage[final]{neurips_2025}  % NEURIPS style (neurips_2025.sty is in paper_draft/)
+   \usepackage[hidelinks]{hyperref}  % REQUIRED: clickable links
+   \usepackage{booktabs}  % REQUIRED: professional tables
+   \usepackage{graphicx}
+   \usepackage{amsmath,amssymb}
+
+   % Import command files
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+   % Use this bibliography style:
+   \bibliographystyle{plainnat}
+
+   \author{Ari Holtzman and NeuriCo}
+
+   - Use \input{sections/...} to include each section
+   - Use \bibliography{references} for references
+3. Write each section file with COMPLETE content (no placeholders)
+4. Each section file should include its \section{} command
+5. Write references.bib with all citations in BibTeX format
+6. After writing all files, compile the paper:
+   cd paper_draft && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+
+This modular structure allows humans to easily:
+- Edit individual sections without navigating a large file
+- Track changes per section
+- Reuse sections across different paper versions
+
+════════════════════════════════════════════════════════════════════════════════
+                          QUALITY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+- Academic tone throughout
+- All claims must be supported by data from the experiment report
+- Proper citations using \cite{} commands
+- Clear figures and tables with proper captions
+- NO placeholder text - every section must have real content
+- The paper MUST compile without errors
+- If compilation fails, debug and fix the LaTeX errors
+
+════════════════════════════════════════════════════════════════════════════════
+                          LAB WRITING STYLE
+════════════════════════════════════════════════════════════════════════════════
+
+Follow these lab-specific conventions to match our paper style:
+
+1. LANGUAGE STYLE:
+   - Use active voice: "We propose", "We examine", "We focus on"
+   - Be direct and confident: "Our main question is...", "We hypothesize that..."
+   - State things clearly and simply - prefer plain language over jargon
+   - Use bold questions as paragraph organizers: {\bf what is X?}
+   - Include specific quantitative claims: "8.97% over baseline"
+   - Avoid fancy wording: "utilize" → "use", "facilitate" → "help"
+
+2. INTRODUCTION STRUCTURE:
+   - Engaging hook (get to the point quickly)
+   - Problem importance
+   - Gap identification
+   - Your approach with method figure reference
+   - Quantitative preview of results
+   - Contribution bullets (3-4 items, action verbs)
+
+3. CONTRIBUTION LISTS:
+   \begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+       \item We propose...
+       \item We conduct...
+       \item We complement...
+   \end{itemize}
+
+4. MODULAR COMMANDS STRUCTURE:
+   Command templates are pre-copied to paper_draft/commands/:
+   - math.tex: Math notation macros
+   - general.tex: Formatting macros
+   - macros.tex: Project-specific term definitions (customize this for your paper)
+
+   In main.tex, include:
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+5. REFERENCE CONVENTIONS:
+   Use reference macros from math.tex:
+   - \figref{fig:name} for "figure 1" (lowercase, in-sentence)
+   - \Figref{fig:name} for "Figure 1" (capitalized, start of sentence)
+   - \secref{sec:name} for "section 2"
+
+6. TEXT FORMATTING:
+   - Use \para{Header text} for bold paragraph headers
+   - Define method/dataset names with \textsc and \xspace:
+     \newcommand{\methodname}{\textsc{MethodName}\xspace}
+
+7. TABLE FORMATTING:
+   - Use booktabs package (no vertical lines)
+   - Use \resizebox{\textwidth}{!}{...} for wide tables
+   - Use @{} to remove padding at table edges
+   - Use \cmidrule(lr){x-y} for sub-headers
+   - Use \textsc{} for dataset/method names in headers
+   - Bold best results with {\bf ...}
+
+8. FIGURE FORMATTING:
+   - Use 0.32\textwidth for 3-column subfigures
+   - Use 0.95\linewidth for full-width figures
+   - Use \input{figures/legend} for shared legends
+   - Write self-contained captions explaining key observations
+
+9. RESULTS PRESENTATION:
+   - Define \increase and \decrease for colored arrows (green up, red down)
+   - Bold best results in tables
+   - Report confidence intervals when available
+
+10. ALGORITHM STYLING:
+    - Use algpseudocode with [noend]
+    - Use \triangleright for comments
+
+11. HYPERLINKS (REQUIRED):
+    - Always use \usepackage[hidelinks]{hyperref} or with colored links
+    - All citations, section refs, figure refs, table refs must be clickable
+    - This is essential for reader navigation
+
+════════════════════════════════════════════════════════════════════════════════
+                          WORKFLOW: REVIEW AND REFLECT
+════════════════════════════════════════════════════════════════════════════════
+
+Before calling finish, you MUST complete these review steps:
+
+1. REVIEW RESOURCES (at the start):
+   - Read .claude/skills/paper-writer/SKILL.md for detailed guidance
+   - Study templates/paper_writing/lab_style_guide.md for style conventions
+   - Browse paper_examples/ for formatting and language patterns
+
+2. SELF-REFLECTION (before finishing):
+   After writing all sections, review your work against these criteria:
+
+   LANGUAGE CHECK:
+   - [ ] Is the writing clear and jargon-free?
+   - [ ] Are claims specific with quantitative support?
+   - [ ] Is active voice used throughout?
+
+   FORMATTING CHECK:
+   - [ ] Does main.tex include \input{commands/math}, \input{commands/general}, \input{commands/macros}?
+   - [ ] Is hyperref package included for clickable references?
+   - [ ] Do tables use booktabs (no vertical lines)?
+   - [ ] Are best results bolded in tables?
+   - [ ] Are figures/tables properly captioned?
+
+   STRUCTURE CHECK:
+   - [ ] Does introduction follow: hook → importance → gap → approach → preview → contributions?
+   - [ ] Are contribution bullets specific with action verbs?
+   - [ ] Does the paper compile without errors?
+
+3. FIX ISSUES:
+   - Address any issues found in the self-reflection
+   - Re-compile and verify the PDF looks correct
+
+Only after completing this review should you consider the paper finished.

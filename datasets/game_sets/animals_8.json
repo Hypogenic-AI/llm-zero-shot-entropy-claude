@@ -1,0 +1,242 @@
+{
+  "0": {
+    "items": [
+      "elephant",
+      "penguin",
+      "bear",
+      "rabbit",
+      "deer",
+      "horse",
+      "eagle",
+      "dolphin"
+    ]
+  },
+  "1": {
+    "items": [
+      "penguin",
+      "bear",
+      "wolf",
+      "eagle",
+      "tiger",
+      "dolphin",
+      "shark",
+      "elephant"
+    ]
+  },
+  "2": {
+    "items": [
+      "rabbit",
+      "snake",
+      "eagle",
+      "deer",
+      "cat",
+      "dog",
+      "owl",
+      "wolf"
+    ]
+  },
+  "3": {
+    "items": [
+      "elephant",
+      "horse",
+      "tiger",
+      "owl",
+      "dolphin",
+      "shark",
+      "eagle",
+      "cat"
+    ]
+  },
+  "4": {
+    "items": [
+      "snake",
+      "eagle",
+      "dolphin",
+      "elephant",
+      "shark",
+      "horse",
+      "fox",
+      "bear"
+    ]
+  },
+  "5": {
+    "items": [
+      "dog",
+      "bear",
+      "fox",
+      "horse",
+      "dolphin",
+      "owl",
+      "cat",
+      "elephant"
+    ]
+  },
+  "6": {
+    "items": [
+      "horse",
+      "cat",
+      "owl",
+      "wolf",
+      "shark",
+      "elephant",
+      "dolphin",
+      "rabbit"
+    ]
+  },
+  "7": {
+    "items": [
+      "penguin",
+      "wolf",
+      "eagle",
+      "tiger",
+      "bear",
+      "owl",
+      "dolphin",
+      "horse"
+    ]
+  },
+  "8": {
+    "items": [
+      "shark",
+      "dolphin",
+      "fox",
+      "dog",
+      "cat",
+      "bear",
+      "penguin",
+      "owl"
+    ]
+  },
+  "9": {
+    "items": [
+      "cat",
+      "dog",
+      "eagle",
+      "deer",
+      "elephant",
+      "bear",
+      "dolphin",
+      "wolf"
+    ]
+  },
+  "10": {
+    "items": [
+      "owl",
+      "horse",
+      "wolf",
+      "penguin",
+      "shark",
+      "dog",
+      "cat",
+      "rabbit"
+    ]
+  },
+  "11": {
+    "items": [
+      "dolphin",
+      "horse",
+      "dog",
+      "eagle",
+      "rabbit",
+      "owl",
+      "elephant",
+      "penguin"
+    ]
+  },
+  "12": {
+    "items": [
+      "dolphin",
+      "dog",
+      "shark",
+      "eagle",
+      "owl",
+      "deer",
+      "tiger",
+      "rabbit"
+    ]
+  },
+  "13": {
+    "items": [
+      "tiger",
+      "eagle",
+      "deer",
+      "horse",
+      "penguin",
+      "rabbit",
+      "elephant",
+      "shark"
+    ]
+  },
+  "14": {
+    "items": [
+      "eagle",
+      "deer",
+      "owl",
+      "elephant",
+      "penguin",
+      "dog",
+      "fox",
+      "shark"
+    ]
+  },
+  "15": {
+    "items": [
+      "fox",
+      "deer",
+      "bear",
+      "wolf",
+      "tiger",
+      "dolphin",
+      "elephant",
+      "cat"
+    ]
+  },
+  "16": {
+    "items": [
+      "deer",
+      "fox",
+      "dog",
+      "snake",
+      "tiger",
+      "wolf",
+      "shark",
+      "eagle"
+    ]
+  },
+  "17": {
+    "items": [
+      "rabbit",
+      "fox",
+      "deer",
+      "tiger",
+      "owl",
+      "dog",
+      "wolf",
+      "penguin"
+    ]
+  },
+  "18": {
+    "items": [
+      "bear",
+      "dolphin",
+      "fox",
+      "cat",
+      "owl",
+      "eagle",
+      "horse",
+      "penguin"
+    ]
+  },
+  "19": {
+    "items": [
+      "bear",
+      "dog",
+      "cat",
+      "dolphin",
+      "elephant",
+      "rabbit",
+      "deer",
+      "owl"
+    ]
+  }
+}

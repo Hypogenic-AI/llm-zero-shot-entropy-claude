@@ -1,0 +1,12 @@
+# Exclude large data files
+*.csv
+*.parquet
+*.arrow
+*.bin
+
+# But include documentation, game sets (small JSON), and samples
+!.gitignore
+!README.md
+!**/README.md
+!game_sets/
+!game_sets/*.json

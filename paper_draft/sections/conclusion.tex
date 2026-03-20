@@ -1,0 +1,13 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We present the first systematic evaluation of whether modern LLMs can zero-shot generate maximum-entropy yes/no questions---questions that split a set of items exactly in half.
+Evaluating \gptfull and \gptmini across 8 datasets, 3 prompt strategies, and 1,049 trials, we find that the capability exists but must be explicitly elicited.
+Chain-of-thought prompting enables \gptfull to achieve perfect splits on structured sets (binary entropy of 1.000) and strong performance on homogeneous sets (0.977 on fruits), compared to near-zero entropy (0.027) with basic prompting.
+Set composition is the primary difficulty factor: mixed-category sets are trivially split, while homogeneous sets (all fruits, all animals) achieve 65--70\% perfect split rates even with the best prompting.
+
+Our findings have practical implications for the design of interactive AI systems.
+LLMs can serve as effective zero-shot question generators for diagnostic and information-seeking tasks, but only when explicitly instructed to optimize for balanced splits.
+The choice between chain-of-thought and explicit split instructions should depend on set size: CoT for small sets (8--16 items), explicit instructions for larger ones.
+
+Future work should extend this evaluation to multi-turn settings, test additional model families, and explore self-verification strategies where the model generates a question, checks its own split, and regenerates if unbalanced.

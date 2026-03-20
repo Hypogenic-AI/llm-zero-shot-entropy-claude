@@ -1,0 +1,322 @@
+{
+  "0": {
+    "items": [
+      "elephant",
+      "snake",
+      "cat",
+      "dolphin",
+      "car",
+      "boat",
+      "airplane",
+      "helicopter"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "1": {
+    "items": [
+      "dog",
+      "snake",
+      "elephant",
+      "eagle",
+      "helicopter",
+      "car",
+      "bicycle",
+      "boat"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "2": {
+    "items": [
+      "cat",
+      "dog",
+      "eagle",
+      "tiger",
+      "bicycle",
+      "motorcycle",
+      "boat",
+      "bus"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "3": {
+    "items": [
+      "elephant",
+      "eagle",
+      "tiger",
+      "dolphin",
+      "airplane",
+      "bus",
+      "boat",
+      "train"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "4": {
+    "items": [
+      "penguin",
+      "cat",
+      "dolphin",
+      "snake",
+      "boat",
+      "helicopter",
+      "train",
+      "airplane"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "5": {
+    "items": [
+      "snake",
+      "dolphin",
+      "tiger",
+      "dog",
+      "helicopter",
+      "bicycle",
+      "car",
+      "airplane"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "6": {
+    "items": [
+      "dog",
+      "dolphin",
+      "penguin",
+      "cat",
+      "helicopter",
+      "car",
+      "motorcycle",
+      "train"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "7": {
+    "items": [
+      "tiger",
+      "dog",
+      "penguin",
+      "elephant",
+      "bicycle",
+      "boat",
+      "bus",
+      "airplane"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "8": {
+    "items": [
+      "snake",
+      "cat",
+      "dolphin",
+      "penguin",
+      "bus",
+      "bicycle",
+      "helicopter",
+      "train"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "9": {
+    "items": [
+      "tiger",
+      "dog",
+      "penguin",
+      "snake",
+      "train",
+      "helicopter",
+      "motorcycle",
+      "bus"
+    ],
+    "categories": [
+      "animal",
+      "vehicle"
+    ]
+  },
+  "10": {
+    "items": [
+      "red",
+      "orange",
+      "black",
+      "white",
+      "France",
+      "Australia",
+      "Canada",
+      "Brazil"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "11": {
+    "items": [
+      "blue",
+      "white",
+      "black",
+      "orange",
+      "Italy",
+      "Japan",
+      "Australia",
+      "India"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "12": {
+    "items": [
+      "purple",
+      "yellow",
+      "blue",
+      "red",
+      "Italy",
+      "India",
+      "Egypt",
+      "France"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "13": {
+    "items": [
+      "red",
+      "orange",
+      "purple",
+      "white",
+      "Japan",
+      "India",
+      "Italy",
+      "Canada"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "14": {
+    "items": [
+      "black",
+      "yellow",
+      "white",
+      "blue",
+      "India",
+      "France",
+      "Japan",
+      "Australia"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "15": {
+    "items": [
+      "red",
+      "yellow",
+      "green",
+      "black",
+      "Egypt",
+      "Australia",
+      "Canada",
+      "Italy"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "16": {
+    "items": [
+      "white",
+      "blue",
+      "black",
+      "green",
+      "Australia",
+      "France",
+      "Egypt",
+      "Canada"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "17": {
+    "items": [
+      "red",
+      "orange",
+      "green",
+      "white",
+      "France",
+      "Egypt",
+      "Australia",
+      "India"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "18": {
+    "items": [
+      "green",
+      "red",
+      "purple",
+      "black",
+      "Brazil",
+      "France",
+      "Egypt",
+      "India"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  },
+  "19": {
+    "items": [
+      "yellow",
+      "white",
+      "red",
+      "purple",
+      "Australia",
+      "Egypt",
+      "India",
+      "France"
+    ],
+    "categories": [
+      "color",
+      "country"
+    ]
+  }
+}

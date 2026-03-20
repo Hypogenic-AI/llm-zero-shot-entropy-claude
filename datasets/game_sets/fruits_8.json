@@ -1,0 +1,242 @@
+{
+  "0": {
+    "items": [
+      "grape",
+      "apple",
+      "strawberry",
+      "kiwi",
+      "coconut",
+      "blueberry",
+      "cherry",
+      "banana"
+    ]
+  },
+  "1": {
+    "items": [
+      "cherry",
+      "pear",
+      "mango",
+      "apple",
+      "watermelon",
+      "banana",
+      "grape",
+      "pineapple"
+    ]
+  },
+  "2": {
+    "items": [
+      "apple",
+      "peach",
+      "grape",
+      "strawberry",
+      "plum",
+      "pineapple",
+      "mango",
+      "blueberry"
+    ]
+  },
+  "3": {
+    "items": [
+      "pineapple",
+      "pear",
+      "kiwi",
+      "watermelon",
+      "apple",
+      "cherry",
+      "mango",
+      "lemon"
+    ]
+  },
+  "4": {
+    "items": [
+      "peach",
+      "cherry",
+      "grape",
+      "watermelon",
+      "lemon",
+      "banana",
+      "plum",
+      "mango"
+    ]
+  },
+  "5": {
+    "items": [
+      "grape",
+      "lemon",
+      "blueberry",
+      "pineapple",
+      "pear",
+      "kiwi",
+      "apple",
+      "orange"
+    ]
+  },
+  "6": {
+    "items": [
+      "grape",
+      "pineapple",
+      "mango",
+      "banana",
+      "peach",
+      "kiwi",
+      "pear",
+      "lemon"
+    ]
+  },
+  "7": {
+    "items": [
+      "mango",
+      "strawberry",
+      "banana",
+      "apple",
+      "plum",
+      "grape",
+      "kiwi",
+      "blueberry"
+    ]
+  },
+  "8": {
+    "items": [
+      "orange",
+      "blueberry",
+      "banana",
+      "mango",
+      "kiwi",
+      "coconut",
+      "lemon",
+      "cherry"
+    ]
+  },
+  "9": {
+    "items": [
+      "strawberry",
+      "lemon",
+      "grape",
+      "plum",
+      "kiwi",
+      "watermelon",
+      "banana",
+      "cherry"
+    ]
+  },
+  "10": {
+    "items": [
+      "orange",
+      "cherry",
+      "coconut",
+      "mango",
+      "kiwi",
+      "plum",
+      "peach",
+      "grape"
+    ]
+  },
+  "11": {
+    "items": [
+      "plum",
+      "blueberry",
+      "watermelon",
+      "pineapple",
+      "apple",
+      "grape",
+      "strawberry",
+      "lemon"
+    ]
+  },
+  "12": {
+    "items": [
+      "watermelon",
+      "kiwi",
+      "banana",
+      "grape",
+      "pear",
+      "lemon",
+      "coconut",
+      "orange"
+    ]
+  },
+  "13": {
+    "items": [
+      "watermelon",
+      "pineapple",
+      "plum",
+      "orange",
+      "cherry",
+      "kiwi",
+      "strawberry",
+      "grape"
+    ]
+  },
+  "14": {
+    "items": [
+      "peach",
+      "strawberry",
+      "pear",
+      "mango",
+      "blueberry",
+      "watermelon",
+      "lemon",
+      "grape"
+    ]
+  },
+  "15": {
+    "items": [
+      "kiwi",
+      "peach",
+      "orange",
+      "banana",
+      "apple",
+      "watermelon",
+      "cherry",
+      "pear"
+    ]
+  },
+  "16": {
+    "items": [
+      "blueberry",
+      "pear",
+      "banana",
+      "mango",
+      "watermelon",
+      "pineapple",
+      "orange",
+      "peach"
+    ]
+  },
+  "17": {
+    "items": [
+      "peach",
+      "coconut",
+      "blueberry",
+      "apple",
+      "plum",
+      "banana",
+      "pineapple",
+      "kiwi"
+    ]
+  },
+  "18": {
+    "items": [
+      "plum",
+      "banana",
+      "kiwi",
+      "mango",
+      "cherry",
+      "orange",
+      "apple",
+      "blueberry"
+    ]
+  },
+  "19": {
+    "items": [
+      "lemon",
+      "peach",
+      "banana",
+      "plum",
+      "kiwi",
+      "watermelon",
+      "pineapple",
+      "grape"
+    ]
+  }
+}

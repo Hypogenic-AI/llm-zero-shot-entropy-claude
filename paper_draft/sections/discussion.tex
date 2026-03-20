@@ -1,0 +1,66 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Capability vs.\ Default Behavior}
+
+Our central finding---that \gptfull achieves 0.027 entropy with \basic prompting but 0.977 with \chainofthought on the same sets---has implications beyond this specific task.
+It demonstrates that \textbf{capability does not imply default behavior}.
+The knowledge required to split a set of fruits into two halves (properties like name length, color, growing region) is clearly present in the model, but it is not activated by a generic question-generation prompt.
+This aligns with findings from QuestBench \citep{li2025questbench}, where models can solve fully-specified problems but fail to ask the right clarifying question.
+
+The gap suggests that RLHF or instruction tuning may have biased \gptfull toward generating ``interesting'' or ``relevant'' questions rather than maximally informative ones.
+A question like ``Is this a fruit?'' is perfectly reasonable in many contexts---it is just useless for distinguishing among fruits.
+
+\subsection{When Chain-of-Thought Helps and Hurts}
+
+\chainofthought prompting is the most reliable strategy for 8--16 item sets, achieving 100\% perfect splits on structured sets and 65--70\% on homogeneous ones.
+The reasoning step forces the model to enumerate candidate properties, count matches, and verify the split before committing to a question.
+This explicit verification acts as a self-correction mechanism.
+
+However, \chainofthought degrades on large sets (29 items in \bigbench).
+The model's counting becomes unreliable over longer lists, producing incorrect split predictions and suboptimal questions.
+For large sets, \explicit prompting is preferable---it communicates the objective without requiring the model to track membership across many items.
+This suggests a practical guideline: use \chainofthought for sets of up to $\sim$16 items and \explicit for larger sets.
+
+\subsection{What Makes a Set Hard to Split?}
+
+Our difficulty analysis identifies three factors:
+
+\para{Homogeneity.}
+The strongest predictor of difficulty is whether items share a category.
+Mixed-category sets are trivially split by category membership.
+Single-category sets require the model to find subtler properties---a fundamentally harder task because the space of possible splitting properties is larger and less salient.
+
+\para{Feature availability.}
+Among homogeneous sets, difficulty correlates with the availability of salient binary properties.
+Animals can be split by habitat (land vs.\ water), diet (herbivore vs.\ carnivore), or size (large vs.\ small).
+Fruits have fewer such properties, making them harder to split.
+The model sometimes resorts to properties like name length (``Does the name have more than six letters?''), which are creative but fragile---small changes in the item set can break the split.
+
+\para{Set size.}
+Larger sets are harder for \chainofthought (which requires tracking all items) but easier for generic questions (which are more likely to produce even splits by chance).
+This creates a tradeoff where the optimal strategy depends on set size.
+
+\subsection{Limitations}
+\label{sec:limitations}
+
+\para{Judge model bias.}
+Using \gptfull as both generator and judge creates a potential consistency bias.
+The generator may produce questions that it knows \gptfull-as-judge will answer in a balanced way, inflating entropy scores relative to what a different judge would produce.
+A human evaluation or cross-model judging setup would strengthen the results.
+
+\para{Single-run evaluation.}
+Each trial was run once with temperature 0.3 for generation.
+While the low temperature and fixed seed provide reproducibility, multiple runs with varied temperatures would reveal the variance of question quality.
+
+\para{Limited model coverage.}
+We evaluate only OpenAI models.
+Testing Claude, Gemini, and open-source models would provide a broader picture of the capability landscape.
+
+\para{Annotation ambiguity.}
+Some generated questions have genuinely ambiguous answers (\eg ``Is a tomato a fruit?''---botanically yes, culinarily no).
+Our single-judge setup forces binary answers but may mask underlying uncertainty.
+
+\para{Single-question scope.}
+We evaluate only the first question in a potential dialogue.
+Real-world information seeking requires maintaining balanced splits across multiple rounds, which involves additional challenges like updating the candidate space.

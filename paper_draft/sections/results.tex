@@ -1,0 +1,139 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Main Results: Binary Entropy by Strategy and Dataset}
+
+\tabref{tab:entropy_gpt41} and \tabref{tab:entropy_mini} present mean binary entropy across all dataset--strategy combinations for \gptfull and \gptmini, respectively.
+
+\begin{table}[t]
+    \centering
+    \caption{Binary entropy (mean $\pm$ std) for \gptfull across prompt strategies. Higher is better; 1.000 indicates a perfect half-split. Best result per dataset in \textbf{bold}.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{\basic} & \textbf{\explicit} & \textbf{\chainofthought} \\
+        \midrule
+        Mixed Categories & 0.841 {\scriptsize $\pm$ 0.365} & \textbf{1.000} {\scriptsize $\pm$ 0.000} & \textbf{1.000} {\scriptsize $\pm$ 0.000} \\
+        \mcrae 8 & 0.206 {\scriptsize $\pm$ 0.367} & 0.997 {\scriptsize $\pm$ 0.012} & \textbf{1.000} {\scriptsize $\pm$ 0.000} \\
+        GPT 8 & 0.177 {\scriptsize $\pm$ 0.375} & \textbf{0.998} {\scriptsize $\pm$ 0.010} & \textbf{0.998} {\scriptsize $\pm$ 0.010} \\
+        \mcrae 16 & 0.484 {\scriptsize $\pm$ 0.475} & 0.995 {\scriptsize $\pm$ 0.014} & \textbf{1.000} {\scriptsize $\pm$ 0.000} \\
+        \bigbench & \textbf{0.992} {\scriptsize $\pm$ 0.000} & 0.998 {\scriptsize $\pm$ 0.002} & 0.942 {\scriptsize $\pm$ 0.107} \\
+        \things 8 & 0.410 {\scriptsize $\pm$ 0.394} & 0.932 {\scriptsize $\pm$ 0.093} & \textbf{0.947} {\scriptsize $\pm$ 0.099} \\
+        Animals 8 & 0.387 {\scriptsize $\pm$ 0.414} & 0.936 {\scriptsize $\pm$ 0.100} & \textbf{0.944} {\scriptsize $\pm$ 0.116} \\
+        Fruits 8 & 0.027 {\scriptsize $\pm$ 0.122} & 0.768 {\scriptsize $\pm$ 0.396} & \textbf{0.977} {\scriptsize $\pm$ 0.044} \\
+        \bottomrule
+    \end{tabular}
+    }
+    \label{tab:entropy_gpt41}
+\end{table}
+
+\begin{table}[t]
+    \centering
+    \caption{Binary entropy (mean $\pm$ std) for \gptmini across prompt strategies. Best result per dataset in \textbf{bold}.}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{\basic} & \textbf{\explicit} & \textbf{\chainofthought} \\
+        \midrule
+        Mixed Categories & 0.950 {\scriptsize $\pm$ 0.224} & 0.998 {\scriptsize $\pm$ 0.010} & \textbf{1.000} {\scriptsize $\pm$ 0.000} \\
+        \mcrae 8 & 0.600 {\scriptsize $\pm$ 0.457} & 0.975 {\scriptsize $\pm$ 0.058} & \textbf{0.995} {\scriptsize $\pm$ 0.014} \\
+        GPT 8 & 0.729 {\scriptsize $\pm$ 0.408} & 0.986 {\scriptsize $\pm$ 0.043} & \textbf{1.000} {\scriptsize $\pm$ 0.000} \\
+        \mcrae 16 & 0.619 {\scriptsize $\pm$ 0.462} & 0.937 {\scriptsize $\pm$ 0.110} & \textbf{0.984} {\scriptsize $\pm$ 0.068} \\
+        \bigbench & 0.781 {\scriptsize $\pm$ 0.230} & 0.722 {\scriptsize $\pm$ 0.115} & \textbf{0.960} {\scriptsize $\pm$ 0.091} \\
+        \things 8 & 0.872 {\scriptsize $\pm$ 0.206} & 0.876 {\scriptsize $\pm$ 0.255} & \textbf{0.963} {\scriptsize $\pm$ 0.093} \\
+        Animals 8 & 0.826 {\scriptsize $\pm$ 0.246} & 0.855 {\scriptsize $\pm$ 0.169} & \textbf{0.956} {\scriptsize $\pm$ 0.066} \\
+        Fruits 8 & 0.381 {\scriptsize $\pm$ 0.481} & \textbf{0.918} {\scriptsize $\pm$ 0.074} & 0.869 {\scriptsize $\pm$ 0.235} \\
+        \bottomrule
+    \end{tabular}
+    }
+    \label{tab:entropy_mini}
+\end{table}
+
+\para{The capability exists but is not default.}
+The most striking result is the gap between \basic and \chainofthought prompting for \gptfull.
+On Fruits~8, \basic achieves an entropy of only 0.027---the model generates questions like ``Is this a fruit?'' to which all items answer ``yes''---while \chainofthought achieves 0.977.
+This 0.950 gap demonstrates that \gptfull possesses the knowledge to split homogeneous sets but does not deploy it without explicit reasoning instructions.
+On structured sets (\mcrae 8, Mixed Categories), \chainofthought achieves perfect entropy of 1.000 with zero variance, indicating complete reliability.
+
+\subsection{Perfect Split Rates}
+
+\tabref{tab:perfect_splits} reports the percentage of trials achieving an exact $N/2$:$N/2$ split.
+
+\begin{table}[t]
+    \centering
+    \caption{Perfect split rate (\%) for \gptfull. A perfect split means exactly $N/2$ items are answered ``yes'' and $N/2$ ``no.'' Best result per dataset in \textbf{bold}.}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{\basic} & \textbf{\explicit} & \textbf{\chainofthought} \\
+        \midrule
+        Mixed Categories & 80.0 & \textbf{100.0} & \textbf{100.0} \\
+        \mcrae 8 & 13.3 & 93.3 & \textbf{100.0} \\
+        GPT 8 & 15.0 & \textbf{95.0} & 94.7 \\
+        \mcrae 16 & 30.0 & 85.0 & \textbf{100.0} \\
+        \bigbench & 0.0 & \textbf{86.7} & 13.3 \\
+        \things 8 & 3.3 & 23.3 & \textbf{56.7} \\
+        Animals 8 & 0.0 & 20.0 & \textbf{70.0} \\
+        Fruits 8 & 0.0 & 25.0 & \textbf{65.0} \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:perfect_splits}
+\end{table}
+
+The perfect split rates sharpen the picture.
+\chainofthought achieves 100\% perfect splits on Mixed Categories, \mcrae 8, and \mcrae 16---every single trial produces a question that divides the set exactly in half.
+On harder sets, perfect splits drop to 56.7--70.0\%, indicating that while \chainofthought substantially improves performance, homogeneous sets remain challenging.
+The exception is \bigbench, where \explicit (86.7\%) dramatically outperforms \chainofthought (13.3\%), as discussed in \secref{sec:setsize}.
+
+\subsection{Statistical Analysis}
+
+\para{Strategy comparison.}
+Paired $t$-tests comparing prompt strategies for \gptfull show:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item \basic vs.\ \chainofthought: $t = -16.27$, $p < 0.0001$, Cohen's $d = -1.76$ (very large effect)
+    \item \basic vs.\ \explicit: $t = -15.01$, $p < 0.0001$, Cohen's $d = -1.61$ (very large effect)
+    \item \chainofthought vs.\ \explicit: $t = 1.80$, $p = 0.073$, Cohen's $d = 0.19$ (not significant)
+\end{itemize}
+
+Both structured strategies massively outperform \basic prompting.
+The difference between \chainofthought and \explicit is not statistically significant overall, though their relative performance varies by dataset.
+
+\para{Model comparison.}
+Comparing \gptfull and \gptmini under the \explicit strategy: $t = 2.24$, $p = 0.026$, Cohen's $d = 0.24$ (small effect favoring \gptfull).
+
+\para{Dataset effects.}
+One-way ANOVA across datasets under \explicit prompting for \gptfull yields $F = 6.35$, $p < 0.000001$, confirming significant differences in difficulty across set compositions.
+
+\subsection{Set Composition Determines Difficulty}
+\label{sec:difficulty}
+
+Ranking datasets by \chainofthought perfect split rate for \gptfull reveals a clear difficulty gradient:
+
+\begin{enumerate}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item \textbf{Mixed Categories} (100\%): Two distinct categories with an obvious boundary (\eg animals vs.\ vehicles).
+    \item \textbf{\mcrae 8} (100\%): Two taxonomic categories (\eg birds and mammals).
+    \item \textbf{GPT 8} (94.7\%): GPT-generated category pairs, similar to \mcrae.
+    \item \textbf{\mcrae 16} (100\%): Larger structured sets remain manageable with reasoning.
+    \item \textbf{\things 8} (56.7\%): Diverse random items without clear binary structure.
+    \item \textbf{Animals 8} (70.0\%): All same category; must find sub-properties (\eg habitat, size).
+    \item \textbf{Fruits 8} (65.0\%): All same category with limited discriminative features.
+\end{enumerate}
+
+The difficulty is driven by two factors.
+First, \textbf{category homogeneity}: when all items share a category, no obvious binary split exists and the model must identify subtle properties (\eg ``name has more than six letters'').
+Second, \textbf{feature availability}: fruits have fewer salient binary properties than animals (which can be split by habitat, diet, size, etc.), making Fruits the hardest 8-item dataset.
+
+\subsection{The BigBench Anomaly: Set Size Effects}
+\label{sec:setsize}
+
+\bigbench (29 items) exhibits a striking reversal: \basic prompting achieves 0.992 entropy while \chainofthought achieves only 0.942, and \explicit achieves 86.7\% perfect splits versus \chainofthought's 13.3\%.
+
+Two factors explain this anomaly.
+First, with 29 diverse items spanning concrete objects, emotions, and abstract concepts, even a generic question like ``Is it a physical object?'' produces a near-even split by chance.
+Second, chain-of-thought reasoning over 29 items is unreliable---the model loses count when enumerating properties and checking membership, leading to incorrect split predictions.
+This suggests that \chainofthought is most effective for smaller sets (8--16 items) where the model can reliably track all items during reasoning.
+
+\subsection{Smaller Models Have Better Default Behavior}
+
+Under \basic prompting, \gptmini consistently outperforms \gptfull: 0.381 vs.\ 0.027 on Fruits, 0.826 vs.\ 0.387 on Animals, and 0.872 vs.\ 0.410 on \things.
+\gptmini appears to interpret ``generate a yes/no question'' more naturally as a discriminative task, while \gptfull defaults to generating confirmation-style questions (\eg ``Is this a fruit?'' for a set of fruits).
+This gap vanishes with explicit instructions---\gptfull catches up and slightly surpasses \gptmini under both \explicit and \chainofthought strategies.

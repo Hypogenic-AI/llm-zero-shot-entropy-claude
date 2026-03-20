@@ -1,0 +1,573 @@
+[
+  {
+    "dataset": "animals_8",
+    "best": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "rabbit",
+        "snake",
+        "eagle",
+        "deer",
+        "cat",
+        "dog",
+        "owl",
+        "wolf"
+      ],
+      "question": "Is this animal commonly kept as a pet?",
+      "yes": [
+        "rabbit",
+        "snake",
+        "cat",
+        "dog"
+      ],
+      "no": [
+        "eagle",
+        "deer",
+        "owl",
+        "wolf"
+      ]
+    },
+    "worst": {
+      "entropy": 0.5435644431995964,
+      "split": "1:7",
+      "items": [
+        "cat",
+        "dog",
+        "eagle",
+        "deer",
+        "elephant",
+        "bear",
+        "dolphin",
+        "wolf"
+      ],
+      "question": "Is this animal a mammal that typically lives in water or can fly?",
+      "yes": [
+        "dolphin"
+      ],
+      "no": [
+        "cat",
+        "dog",
+        "eagle",
+        "deer",
+        "elephant",
+        "bear",
+        "wolf"
+      ]
+    }
+  },
+  {
+    "dataset": "bigbench",
+    "best": {
+      "entropy": 0.9991421039919088,
+      "split": "14:15",
+      "items": [
+        "apple",
+        "television",
+        "dinosaur",
+        "airplane",
+        "house",
+        "tree",
+        "coat",
+        "shoes",
+        "car",
+        "train",
+        "shower",
+        "frisbee",
+        "cow",
+        "giganotosaurus",
+        "siberian husky",
+        "glass micropipette",
+        "anger",
+        "love",
+        "hate",
+        "contentment",
+        "jealousy",
+        "surprise",
+        "disgust",
+        "hopefulness",
+        "global poverty",
+        "phase transition",
+        "positive sum game",
+        "beauty",
+        "representative democracy"
+      ],
+      "question": "Is this item a physical object that you can touch?",
+      "yes": [
+        "apple",
+        "television",
+        "airplane",
+        "house",
+        "tree",
+        "coat",
+        "shoes",
+        "car",
+        "train",
+        "shower",
+        "frisbee",
+        "cow",
+        "siberian husky",
+        "glass micropipette"
+      ],
+      "no": [
+        "dinosaur",
+        "giganotosaurus",
+        "anger",
+        "love",
+        "hate",
+        "contentment",
+        "jealousy",
+        "surprise",
+        "disgust",
+        "hopefulness",
+        "global poverty",
+        "phase transition",
+        "positive sum game",
+        "beauty",
+        "representative democracy"
+      ]
+    },
+    "worst": {
+      "entropy": 0.9922666387194963,
+      "split": "16:13",
+      "items": [
+        "apple",
+        "television",
+        "dinosaur",
+        "airplane",
+        "house",
+        "tree",
+        "coat",
+        "shoes",
+        "car",
+        "train",
+        "shower",
+        "frisbee",
+        "cow",
+        "giganotosaurus",
+        "siberian husky",
+        "glass micropipette",
+        "anger",
+        "love",
+        "hate",
+        "contentment",
+        "jealousy",
+        "surprise",
+        "disgust",
+        "hopefulness",
+        "global poverty",
+        "phase transition",
+        "positive sum game",
+        "beauty",
+        "representative democracy"
+      ],
+      "question": "Is it a physical object?",
+      "yes": [
+        "apple",
+        "television",
+        "dinosaur",
+        "airplane",
+        "house",
+        "tree",
+        "coat",
+        "shoes",
+        "car",
+        "train",
+        "shower",
+        "frisbee",
+        "cow",
+        "giganotosaurus",
+        "siberian husky",
+        "glass micropipette"
+      ],
+      "no": [
+        "anger",
+        "love",
+        "hate",
+        "contentment",
+        "jealousy",
+        "surprise",
+        "disgust",
+        "hopefulness",
+        "global poverty",
+        "phase transition",
+        "positive sum game",
+        "beauty",
+        "representative democracy"
+      ]
+    }
+  },
+  {
+    "dataset": "fruits_8",
+    "best": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "grape",
+        "apple",
+        "strawberry",
+        "kiwi",
+        "coconut",
+        "blueberry",
+        "cherry",
+        "banana"
+      ],
+      "question": "Is the fruit's name composed of more than six letters?",
+      "yes": [
+        "strawberry",
+        "coconut",
+        "blueberry",
+        "banana"
+      ],
+      "no": [
+        "grape",
+        "apple",
+        "kiwi",
+        "cherry"
+      ]
+    },
+    "worst": {
+      "entropy": 0.0,
+      "split": "0:8",
+      "items": [
+        "cherry",
+        "pear",
+        "mango",
+        "apple",
+        "watermelon",
+        "banana",
+        "grape",
+        "pineapple"
+      ],
+      "question": "Is the fruit's name made up of more than one word?",
+      "yes": [],
+      "no": [
+        "cherry",
+        "pear",
+        "mango",
+        "apple",
+        "watermelon",
+        "banana",
+        "grape",
+        "pineapple"
+      ]
+    }
+  },
+  {
+    "dataset": "gpt_8",
+    "best": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "dog",
+        "bear",
+        "flamingo",
+        "hawk",
+        "toucan",
+        "dalmatian",
+        "hippopotamus",
+        "chick"
+      ],
+      "question": "Is it a type of bird?",
+      "yes": [
+        "flamingo",
+        "hawk",
+        "toucan",
+        "chick"
+      ],
+      "no": [
+        "dog",
+        "bear",
+        "dalmatian",
+        "hippopotamus"
+      ]
+    },
+    "worst": {
+      "entropy": 0.954434002924965,
+      "split": "5:3",
+      "items": [
+        "chihuahua",
+        "mulberry",
+        "manatee",
+        "kiwi",
+        "pear",
+        "otter",
+        "banana",
+        "pug"
+      ],
+      "question": "Is it a type of animal?",
+      "yes": [
+        "chihuahua",
+        "manatee",
+        "kiwi",
+        "otter",
+        "pug"
+      ],
+      "no": [
+        "mulberry",
+        "pear",
+        "banana"
+      ]
+    }
+  },
+  {
+    "dataset": "mcrae_16",
+    "best": {
+      "entropy": 1.0,
+      "split": "8:8",
+      "items": [
+        "parakeet",
+        "seal",
+        "goose",
+        "stork",
+        "deer",
+        "finch",
+        "seagull",
+        "dog",
+        "dolphin",
+        "cow",
+        "budgie",
+        "otter",
+        "rooster",
+        "canary",
+        "walrus",
+        "sheep"
+      ],
+      "question": "Is it a bird?",
+      "yes": [
+        "parakeet",
+        "goose",
+        "stork",
+        "finch",
+        "seagull",
+        "budgie",
+        "rooster",
+        "canary"
+      ],
+      "no": [
+        "seal",
+        "deer",
+        "dog",
+        "dolphin",
+        "cow",
+        "otter",
+        "walrus",
+        "sheep"
+      ]
+    },
+    "worst": {
+      "entropy": 0.954434002924965,
+      "split": "6:10",
+      "items": [
+        "whale",
+        "machete",
+        "stick",
+        "crowbar",
+        "slingshot",
+        "goat",
+        "porcupine",
+        "cat",
+        "axe",
+        "sword",
+        "dolphin",
+        "buffalo",
+        "elk",
+        "crossbow",
+        "chipmunk",
+        "revolver"
+      ],
+      "question": "Is it a weapon?",
+      "yes": [
+        "machete",
+        "slingshot",
+        "axe",
+        "sword",
+        "crossbow",
+        "revolver"
+      ],
+      "no": [
+        "whale",
+        "stick",
+        "crowbar",
+        "goat",
+        "porcupine",
+        "cat",
+        "dolphin",
+        "buffalo",
+        "elk",
+        "chipmunk"
+      ]
+    }
+  },
+  {
+    "dataset": "mcrae_8",
+    "best": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "elk",
+        "chicken",
+        "robin",
+        "starling",
+        "fox",
+        "partridge",
+        "hamster",
+        "buffalo"
+      ],
+      "question": "Is it a bird?",
+      "yes": [
+        "chicken",
+        "robin",
+        "starling",
+        "partridge"
+      ],
+      "no": [
+        "elk",
+        "fox",
+        "hamster",
+        "buffalo"
+      ]
+    },
+    "worst": {
+      "entropy": 0.954434002924965,
+      "split": "3:5",
+      "items": [
+        "tomato",
+        "giraffe",
+        "rhubarb",
+        "hamster",
+        "tangerine",
+        "mink",
+        "cranberry",
+        "cheetah"
+      ],
+      "question": "Is it a fruit?",
+      "yes": [
+        "tomato",
+        "tangerine",
+        "cranberry"
+      ],
+      "no": [
+        "giraffe",
+        "rhubarb",
+        "hamster",
+        "mink",
+        "cheetah"
+      ]
+    }
+  },
+  {
+    "dataset": "mixed_categories_8",
+    "best": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "elephant",
+        "snake",
+        "cat",
+        "dolphin",
+        "car",
+        "boat",
+        "airplane",
+        "helicopter"
+      ],
+      "question": "Is it a type of vehicle?",
+      "yes": [
+        "car",
+        "boat",
+        "airplane",
+        "helicopter"
+      ],
+      "no": [
+        "elephant",
+        "snake",
+        "cat",
+        "dolphin"
+      ]
+    },
+    "worst": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "elephant",
+        "snake",
+        "cat",
+        "dolphin",
+        "car",
+        "boat",
+        "airplane",
+        "helicopter"
+      ],
+      "question": "Is it a type of vehicle?",
+      "yes": [
+        "car",
+        "boat",
+        "airplane",
+        "helicopter"
+      ],
+      "no": [
+        "elephant",
+        "snake",
+        "cat",
+        "dolphin"
+      ]
+    }
+  },
+  {
+    "dataset": "things_8",
+    "best": {
+      "entropy": 1.0,
+      "split": "4:4",
+      "items": [
+        "bat",
+        "aardvark",
+        "bouquet",
+        "clownfish",
+        "apple",
+        "seagull",
+        "quantum computer",
+        "yoga mat"
+      ],
+      "question": "Is it something that is alive?",
+      "yes": [
+        "bat",
+        "aardvark",
+        "clownfish",
+        "seagull"
+      ],
+      "no": [
+        "bouquet",
+        "apple",
+        "quantum computer",
+        "yoga mat"
+      ]
+    },
+    "worst": {
+      "entropy": 0.5435644431995964,
+      "split": "7:1",
+      "items": [
+        "quantum computer",
+        "mermaid",
+        "honey bee",
+        "wristwatch",
+        "bouquet",
+        "asparagus",
+        "citadel",
+        "spaceship"
+      ],
+      "question": "Is it something that exists in the real world?",
+      "yes": [
+        "quantum computer",
+        "honey bee",
+        "wristwatch",
+        "bouquet",
+        "asparagus",
+        "citadel",
+        "spaceship"
+      ],
+      "no": [
+        "mermaid"
+      ]
+    }
+  }
+]

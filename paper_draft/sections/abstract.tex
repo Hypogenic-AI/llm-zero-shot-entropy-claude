@@ -1,0 +1,7 @@
+Efficient information seeking requires questions that split the possibility space in half---the optimal strategy from binary search.
+We investigate whether modern large language models can, in a zero-shot setting, generate yes/no questions that achieve this maximum-entropy split over a given set of items.
+We evaluate \gptfull and \gptmini across 8 datasets (1,049 trials) with three prompt strategies: basic, explicit split instruction, and chain-of-thought (CoT).
+We find that the capability exists but is not the default behavior: without explicit guidance, \gptfull achieves near-zero binary entropy on homogeneous sets (0.027 on fruits), yet with CoT prompting jumps to 0.977 on the same sets and 1.000 on structured category sets.
+Surprisingly, \gptmini produces more naturally discriminative questions than \gptfull under basic prompting, though \gptfull surpasses it with explicit instructions.
+Set composition is the primary difficulty factor: mixed-category sets yield 100\% perfect splits, while homogeneous sets (all fruits or animals) top out at 65--70\%.
+These results demonstrate that modern LLMs possess strong implicit knowledge of item properties sufficient for optimal set partitioning, but this reasoning must be explicitly elicited through prompt design.

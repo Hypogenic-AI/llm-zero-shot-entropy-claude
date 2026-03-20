@@ -1,0 +1,85 @@
+\section{Methodology}
+\label{sec:method}
+
+\subsection{Task Formulation}
+
+Given a set of $N$ items $S = \{s_1, s_2, \ldots, s_N\}$, the task is to generate a yes/no question $q$ such that the resulting partition $(S_{\text{yes}}, S_{\text{no}})$ maximizes binary entropy.
+Let $p = |S_{\text{yes}}| / N$ denote the fraction of items answered ``yes.''
+The binary entropy of the split is:
+\begin{equation}
+    H(p) = -p \log_2 p - (1-p) \log_2 (1-p)
+    \label{eq:entropy}
+\end{equation}
+This is maximized at $H(0.5) = 1.0$ when $|S_{\text{yes}}| = |S_{\text{no}}| = N/2$, corresponding to a perfect half-split.
+A question where all items receive the same answer yields $H(0) = H(1) = 0$.
+
+\subsection{Evaluation Pipeline}
+
+For each item set, our evaluation proceeds in three steps:
+
+\para{Step 1: Generate.} We prompt an LLM to produce a single yes/no question about the items in $S$.
+The prompt varies by strategy (described below).
+
+\para{Step 2: Annotate.} We use \gptfull as an oracle to label each item $s_i \in S$ as ``yes'' or ``no'' for the generated question $q$.
+The judge operates at temperature 0 for deterministic labeling.
+
+\para{Step 3: Measure.} We compute the binary entropy $H(p)$ of the resulting split using \eqref{eq:entropy}, the perfect split rate (whether $|S_{\text{yes}}| = N/2$), and the mean deviation from half ($|{|S_{\text{yes}}|} - N/2|$).
+
+Using \gptfull as a consistent judge across all conditions ensures that differences in measured entropy reflect differences in question quality, not annotation variance.
+
+\subsection{Prompt Strategies}
+\label{sec:prompts}
+
+We evaluate three prompting strategies of increasing specificity:
+
+\para{\basic.} The model receives only the item list and is asked to ``generate a single yes/no question about these items.''
+No mention is made of splitting, balancing, or information gain.
+This tests the model's default question-asking behavior.
+
+\para{\explicit.} The prompt explicitly instructs the model to ``generate a yes/no question such that exactly $N/2$ items would be answered `yes' and $N/2$ would be answered `no'.''
+This tests whether the model can follow a direct splitting instruction.
+
+\para{\chainofthought (Chain-of-Thought).} The prompt asks the model to reason step by step: (1) identify properties of each item, (2) find a property shared by exactly half the items, and (3) formulate a question based on that property.
+This tests whether structured reasoning improves split quality.
+
+\subsection{Datasets}
+\label{sec:datasets}
+
+We evaluate on 8 datasets spanning a range of set compositions and difficulty levels, totaling 395 item sets (\tabref{tab:datasets}).
+
+\begin{table}[t]
+    \centering
+    \caption{Datasets used in our evaluation. Difficulty is assessed based on the availability of obvious binary splits within each set. Sources: Bertolazzi et al.\ (\citeyear{bertolazzi2023chatgpt}), Zhang et al.\ (\citeyear{zhang2024probing}), Srivastava et al.\ (\citeyear{srivastava2023bigbench}).}
+    \begin{tabular}{@{}llcll@{}}
+        \toprule
+        \textbf{Dataset} & \textbf{Source} & \textbf{Items/Set} & \textbf{Sets} & \textbf{Difficulty} \\
+        \midrule
+        Mixed Categories & Custom & 8 & 20 & Easy \\
+        \mcrae 8 & Bertolazzi 2023 & 8 & 30 & Easy--Medium \\
+        GPT 8 & Bertolazzi 2023 & 8 & 20 & Easy--Medium \\
+        \mcrae 16 & Bertolazzi 2023 & 16 & 20 & Medium \\
+        \things 8 & Zhang 2024 & 8 & 30 & Medium--Hard \\
+        Animals 8 & Custom & 8 & 20 & Hard \\
+        Fruits 8 & Custom & 8 & 20 & Hard \\
+        \bigbench & Srivastava 2023 & 29 & 15 & Variable \\
+        \bottomrule
+    \end{tabular}
+    \label{tab:datasets}
+\end{table}
+
+The datasets vary along two key dimensions.
+First, \textbf{category heterogeneity}: Mixed Categories sets contain items from two distinct categories (\eg animals and vehicles), providing an obvious binary split.
+\mcrae and GPT sets draw from two taxonomic categories, while Animals and Fruits sets contain items from a single category, requiring the model to find subtler distinguishing properties.
+Second, \textbf{set size}: most datasets use 8-item sets, \mcrae 16 uses 16 items, and \bigbench uses 29 items per set.
+
+\subsection{Models}
+
+We evaluate two models:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item \gptfull: OpenAI's state-of-the-art model (March 2025), used as both generator and judge.
+    \item \gptmini: A smaller, more efficient model, used as generator only.
+\end{itemize}
+
+Generation uses temperature 0.3; judging uses temperature 0.
+All experiments use a fixed random seed of 42, with 10 concurrent API calls per batch.
+The total evaluation comprises 1,049 trials across all model--strategy--dataset combinations.

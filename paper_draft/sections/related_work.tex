@@ -1,0 +1,27 @@
+\section{Related Work}
+\label{sec:related}
+
+\para{LLMs as question askers in 20 Questions.}
+Several recent studies evaluate LLMs as players in the 20 Questions game.
+\citet{bertolazzi2023chatgpt} provide the first evaluation of ChatGPT's information-seeking strategy, building hierarchical hypothesis spaces from McRae feature norms and GPT-generated norms.
+They find ChatGPT far from optimal when updating the candidate space internally, but show improvement when prompted to explicitly track remaining candidates.
+\citet{zhang2024probing} conduct a systematic evaluation across multiple LLMs (GPT-4, GPT-3.5, Claude, Vicuna, Mistral) in their Entity-Deduction Arena, finding that GPT-4 achieves $\sim$31\% success on the Things dataset and $\sim$50\% on Celebrities.
+They identify binary-tree-like narrowing as the effective strategy and enumerate common failure modes including early enumeration, redundancy, and inconsistency.
+Unlike these works, we isolate the \emph{single-question} splitting capability rather than evaluating multi-turn game performance.
+
+\para{Training LLMs for informative questions.}
+\citet{mazzaccara2024learning} use DPO to train LLaMA~2-Chat to ask higher-EIG questions.
+They sample multiple candidate questions, compute EIG by annotating each item, and create preference pairs (optimal EIG vs.\ suboptimal).
+Zero-shot LLaMA~2-Chat achieves EIG of 0.29--0.35, which DPO training improves to 0.40--0.47---still well below optimal.
+We test the hypothesis that modern models (GPT-4.1) may already possess this capability without training, given the right prompting strategy.
+
+\para{Information-theoretic question evaluation.}
+The \textsc{GuessingGame} benchmark \citep{guessinggame2025} directly measures information gain of LLM questions using Bayesian and entropy-based metrics, finding that higher IG reduces expected game length by 43\%.
+\citet{hu2024uncertainty} propose Uncertainty of Thoughts, an uncertainty-aware planning framework that uses EIG-based rewards for LLM information seeking, improving success rates by 38.1\%.
+\textsc{BED-LLM} \citep{bedllm2025} applies sequential Bayesian experimental design with EIG for optimal question selection.
+These works develop algorithms to \emph{select} informative questions; we instead ask whether LLMs can \emph{generate} them zero-shot.
+
+\para{Active reasoning and question generation benchmarks.}
+\citet{li2025questbench} introduce QuestBench, showing that LLMs struggle to identify the right question to acquire missing information even when they can solve the fully-specified version.
+\citet{zhou2025active} propose AR-Bench for evaluating active reasoning, finding that LLMs frequently fail to maximize expected information gain.
+Our work complements these benchmarks by providing a controlled evaluation of the core splitting capability in isolation.
